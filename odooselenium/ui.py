@@ -430,10 +430,12 @@ class OdooUI(object):
         item_link.click()
 
     def clear_search_facets(self):
-        xpath = '//div[@class="oe_searchview_clear"]'
-        clear_searchview_button = self.wait_for_visible_element_by_xpath(xpath)
-        with self.wait_for_ajax_load():
-            clear_searchview_button.click()
+        xpath = '//span[@class="oe_facet_remove"]'
+        buttons = self.webdriver.find_elements_by_xpath(xpath)
+        for button in buttons:
+            if button.is_displayed():
+                with self.wait_for_ajax_load():
+                    button.click()
 
     def search_for(self, search_string):
         xpath = ('//div[@class="oe_searchview_facets"]/'
