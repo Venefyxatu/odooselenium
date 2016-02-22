@@ -569,8 +569,8 @@ class OdooUI(object):
 
         @param view_name: should be list, form or kanban"""
 
-        xpath = ('//ul[@class="oe_view_manager_switch oe_button_group '
-                 'oe_right"]/li/a[@data-view-type="{}"]'.format(view_name))
+        xpath = ('//button[contains(@class, "oe-cp-switch-list") and '
+                 '@data-original-title="{}"]'.format(view_name.capitalize()))
         button = self.wait_for_visible_element_by_xpath(xpath)
         button.click()
 
