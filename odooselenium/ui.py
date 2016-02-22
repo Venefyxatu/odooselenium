@@ -508,6 +508,33 @@ class OdooUI(object):
         with self.wait_for_ajax_load():
             elem.click()
 
+    def enable_developer_mode(self):
+        """Enable developer mode."""
+
+        self.open_user_menu()
+        self.click_user_menu_item('About')
+        xpath = '//a[@href="?debug"]'
+        elem = self.wait_for_visible_element_by_xpath(xpath)
+        with wait.wait_for_body_odoo_load(self.webdriver):
+            elem.click()
+
+    def open_user_menu(self):
+        """Open the user dropdown menu"""
+
+        xpath = '//span[@class="oe_topbar_name"]'
+        menu = self.wait_for_visible_element_by_xpath(xpath)
+        menu.click()
+
+    def click_user_menu_item(self, item):
+        """Click an item in the user drop down menu. The menu has to be opened
+        first."""
+
+        xpath = ('//ul[@class="dropdown-menu"]/li'
+                 '/a[normalize-space(text())="{}"]'.format(item))
+        elem = self.wait_for_visible_element_by_xpath(xpath)
+        with self.wait_for_ajax_load():
+            elem.click()
+
     def install_module(self, module_name, column='shortdesc', timeout=60,
                        upgrade=False):
         """ Install the specified module. You need to be on the Settings page.
