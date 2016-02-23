@@ -149,7 +149,7 @@ class OdooUI(object):
         ui.WebDriverWait(self.webdriver, timeout).until(
             expected_conditions.presence_of_element_located((
                 By.CSS_SELECTOR,
-                '.oe_application .oe_view_manager'
+                '.oe_application .oe-view-manager'
             ))
         )
 
@@ -560,7 +560,7 @@ class OdooUI(object):
 
         self.click_list_column(column, module_name)
         btn = self.wait_for_visible_element_by_xpath(
-            '//button[@class="oe_button oe_form_button oe_highlight"]')
+            '//button[@class="btn btn-sm oe_button btn btn-primary"]')
         with self.wait_for_ajax_load(timeout):
             btn.click()
 
