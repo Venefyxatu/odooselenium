@@ -416,14 +416,17 @@ class OdooUI(object):
         """Click an item in the More menu that appears when selecting list
         items"""
 
-        more_button = self.wait_for_visible_element_by_xpath(
-            '//button[normalize-space(text())="More" and '
-            'not(ancestor::div[@style="display: none;"])]')
-        more_button.click()
-        item_link = self.wait_for_visible_element_by_xpath(
-            '//ul[@class="oe_dropdown_menu oe_opened"]/li/a['
-            'normalize-space(text())="{}"]'.format(menu_item))
-        item_link.click()
+        action_button = self.wait_for_visible_element_by_xpath(
+            '//a[@class="dropdown-toggle" and normalize-space(text())="Action"'
+            ' and not(@role="button")]')
+        if action_button.is_displayed():
+            action_button.click()
+            item_link = self.wait_for_visible_element_by_xpath(
+                '//ul[@class="dropdown-menu"]/li/a['
+                'normalize-space(text())="{}"]'.format(menu_item))
+            item_link.click()
+        else:
+            raise RuntimeError('Action button is not displayed')
 
     def clear_search_facets(self):
         xpath = ('//div[@class="o_searchview_facet"]'
