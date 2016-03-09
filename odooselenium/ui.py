@@ -165,42 +165,19 @@ class OdooUI(object):
 
     def go_to_view(self, view_name, timeout=10):
         """Click on the view in menu."""
-        # Select all the secondary menus
-        secondary_menus = self.webdriver.find_elements_by_css_selector(
-            '.oe_secondary_menu')
+        xpath = ('//ul[@class="nav navbar-nav o_menu_sections"]/li'
+                 '/descendant::*[normalize-space(text())="{}"]')
+
         menu_parts = view_name.split(u'/')
-        searched_menu = menu_parts.pop(0)
-        # Click on the view requested
-        view_link = None
-        for sec_menu in secondary_menus:
-            if sec_menu.is_displayed():
-                menus = sec_menu.find_elements(
-                    By.CSS_SELECTOR,
-                    ".oe_secondary_submenu .oe_menu_text"
-                )
-                for menu in menus:
-                    if menu.text == searched_menu:
-                        menu_parent = menu.find_element_by_xpath('ancestor::a')
-                        if menu_parts:
-                            if ('oe_menu_opened' not in
-                                    menu_parent.get_attribute('class')):
-                                menu.click()
-                            searched_menu = menu_parts.pop(0)
-                        else:
-                            view_link = menu
-                            break
-                break
-        assert view_link is not None, \
-            "Couldn't find view menu '{0}'".format(view_name)
-        with self.wait_for_ajax_load():
-            view_link.click()
-        # Wait for application view to be loaded.
-        ui.WebDriverWait(self.webdriver, timeout).until(
-            expected_conditions.presence_of_element_located((
-                By.CSS_SELECTOR,
-                '.oe_application .oe_view_manager'
-            ))
-        )
+        for menu_part in menu_parts:
+            try:
+                elem = self.webdriver.find_element_by_xpath(xpath.format(
+                    menu_part))
+                with self.wait_for_ajax_load():
+                    elem.click()
+            except NoSuchElementException:
+                raise RuntimeError("Couldn't find view menu '{0}'".format(
+                    view_name))
 
     def click_form_view_tab(self, tab_name):
         tabs = self.webdriver.find_elements(
