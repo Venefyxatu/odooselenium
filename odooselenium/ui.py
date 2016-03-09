@@ -362,9 +362,9 @@ class OdooUI(object):
         """Select items in a list view where the specified data_field has the
         specified column_value"""
 
-        xpath = ('//table[@class="oe_list_content"]/tbody/tr/'
+        xpath = ('//table[contains(@class, "o_list_view")]/tbody/tr/'
                  'td[@data-field="{}" and text()="{}"]/../'
-                 'th[@class="oe_list_record_selector"]/input'.format(
+                 'td[@class="o_list_record_selector"]/div/input'.format(
                      data_field, column_value))
         checkboxes = self.webdriver.find_elements_by_xpath(xpath)
         for checkbox in checkboxes:
