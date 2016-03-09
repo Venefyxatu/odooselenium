@@ -206,6 +206,7 @@ class OdooUI(object):
             requested_tab.click()
 
     def click_button(self, button_name, view_name):
+        # TODO: test with v9
         button_divs = self.webdriver.find_elements_by_css_selector(
             '.oe_view_manager_buttons .oe_{}_buttons'.format(view_name))
         for button_div in button_divs:
@@ -224,6 +225,7 @@ class OdooUI(object):
         self.click_ajax_load_button('oe_form_button_edit', timeout=timeout)
 
     def click_apply(self, timeout=10):
+        # TODO: test with v9
         self.click_ajax_load_button('execute', timeout=timeout)
 
     def click_ajax_load_button(self, data_bt_testing_name,
@@ -244,6 +246,7 @@ class OdooUI(object):
             visible_buttons[0].click()
 
     def delete_item_from_form_kanban(self, value, timeout=10):
+        # TODO: test with v9
         xpath = ('//a[contains(@class, "oe_kanban_action") and text()="{}"]'
                  '/ancestor::div[contains(@class, "oe_kanban_record")]'
                  '//a[contains(@class, "oe_kanban_action") and '
@@ -253,6 +256,7 @@ class OdooUI(object):
 
     def get_values_from_form_kanban(self):
         """Get the displayed values of a form sub-kanban"""
+        # TODO: test with v9
 
         xpath = ('//div[@class="oe_form"]//div[contains(@class, '
                  '"oe_kanban_record")]//table[@class="oe_kanban_table"]//a')
@@ -292,6 +296,7 @@ class OdooUI(object):
 
     def delete_item_from_form_list(self, column, value, header=None,
                                    timeout=10):
+        # TODO: test with v9
         xpath = ('//table[@class="oe_list_content"]/tbody/tr/'
                  'td[@data-field="{}" and text()="{}"]/following-sibling::'
                  'td[@class="oe_list_record_delete"]'.format(column, value))
@@ -303,6 +308,7 @@ class OdooUI(object):
         self._delete_item_from_form(xpath, timeout)
 
     def _delete_item_from_form(self, xpath, timeout):
+        # TODO: test with v9
         delete_buttons = self.webdriver.find_elements_by_xpath(xpath)
 
         visible_buttons = [b for b in delete_buttons if b.is_displayed()]
@@ -317,10 +323,12 @@ class OdooUI(object):
                     pass
 
     def add_item_to_form_kanban(self, timeout=10):
+        # TODO: test with v9
         xpath = '//button[@data-bt-testing-button="oe_kanban_button_new"]'
         self._add_item_to_form(xpath, timeout)
 
     def add_item_to_form_table(self, header=None, timeout=10):
+        # TODO: test with v9
         xpath = ('//*[@class="oe_form_field_one2many_list_row_add" or '
                  '@class="oe_form_field_many2many_list_row_add"]/a')
         if header:
@@ -329,6 +337,7 @@ class OdooUI(object):
         self._add_item_to_form(xpath, timeout)
 
     def _add_item_to_form(self, xpath, timeout):
+        # TODO: test with v9
         add_links = self.webdriver.find_elements_by_xpath(xpath)
         visible_links = [l for l in add_links if l.is_displayed()]
         if len(visible_links) != 1:
@@ -545,7 +554,7 @@ class OdooUI(object):
         with self.wait_for_ajax_load():
             elem.click()
 
-    def install_module(self, module_name, column='shortdesc', timeout=60,
+    def install_module(self, module_name, column='name', timeout=60,
                        upgrade=False):
         """ Install the specified module. You need to be on the Settings page.
         This will NOT go through the setup wizard.
@@ -602,6 +611,7 @@ class OdooUI(object):
         @clear: whether to clear the field first
         @param clear: whether to clear the field first
         """
+        # TODO: test with v9
         elem = self._get_bt_testing_element(field_name, model_name,
                                             in_dialog=in_dialog)
 
@@ -612,11 +622,13 @@ class OdooUI(object):
 
     def toggle_checkbox(self, field_name, model_name):
         """Toggles a checkbox"""
+        # TODO: test with v9
         elem = self._get_bt_testing_element(field_name, model_name)
         elem.click()
 
     def open_text_dropdown(self, field_name, model_name, in_dialog):
         """Open a dropdown list on a text field"""
+        # TODO: test with v9
 
         if in_dialog:
             xpath = '//div[@class="modal-content openerp"]'
@@ -635,6 +647,7 @@ class OdooUI(object):
         """Get the editable field which belongs to a label.
         CAUTION: some labels have more than one field, but only one of them
         will be linked by ID."""
+        # TODO: test with v9
 
         xpath = '//tr/td/label[normalize-space(text())="{}"]'.format(
             label_text)
@@ -645,6 +658,7 @@ class OdooUI(object):
 
     def get_value(self, field, model):
         """Get the value of a field"""
+        # TODO: test with v9
 
         field = self._get_bt_testing_element(field, model)
         if field.get_attribute('type') == 'checkbox':
@@ -665,6 +679,7 @@ class OdooUI(object):
         @param search_column: the column title to search in the Search form in
                               case of an autocomplete text field
         """
+        # TODO: test with v9
         input_field = self._get_bt_testing_element(field, model,
                                                    in_dialog=in_dialog)
 
@@ -712,6 +727,7 @@ class OdooUI(object):
             * search_column: the column title to search in the Search form in
                              case of an autocomplete text field
         """
+        # TODO: test with v9
         for config_item in config_data:
             self.enter_data(config_item['field'], config_item['model'],
                             config_item['value'],
@@ -724,6 +740,7 @@ class OdooUI(object):
 
     def _get_data_id_from_column_title(self, column_title):
         """Get the data-id attribute based on a column title"""
+        # TODO: test with v9
 
         xpath = ('//table[@class="oe_list_content"]/thead/tr'
                  '[@class="oe_list_header_columns"]/th/div[normalize-space('
@@ -733,6 +750,7 @@ class OdooUI(object):
         return elem.get_attribute('data-id')
 
     def _get_autocomplete_dropdown_items(self, field_name, model, in_dialog):
+        # TODO: test with v9
         self.open_text_dropdown(field_name, model, in_dialog)
         menu_items_xpath = ('//ul[contains(@class, "ui-autocomplete")]/'
                             'li[contains(@class, "ui-menu-item")]/a')
@@ -745,6 +763,7 @@ class OdooUI(object):
         """Search through a text dropdown. If the value is already in the
         dropdown, click it. If not, go to the search form via the Search
         More... item."""
+        # TODO: test with v9
 
         menu_items = self._get_autocomplete_dropdown_items(field_name,
                                                            model,
@@ -760,6 +779,7 @@ class OdooUI(object):
                                   config_data):
         """Create a new item in an autocomplete text field via the Create and
         Edit option"""
+        # TODO: test with v9
         menu_items = self._get_autocomplete_dropdown_items(field_name,
                                                            model,
                                                            in_dialog)
@@ -778,6 +798,7 @@ class OdooUI(object):
                              subsequent dialog
         @param value: the value to search for
         """
+        # TODO: test with v9
         elem = next(e for e in menu_items if e.text == 'Search More...')
         with self.wait_for_ajax_load():
             elem.click()
