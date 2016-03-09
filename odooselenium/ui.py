@@ -179,6 +179,17 @@ class OdooUI(object):
                 raise RuntimeError("Couldn't find view menu '{0}'".format(
                     view_name))
 
+    def switch_to_view(self, view_name):
+        """Switch to list, form or kanban view
+
+        @param view_name: should be list, form or kanban"""
+
+        xpath = ('//button[contains(@class, "o_cp_switch_{}") and '
+                 '@data-original-title="{}"]'.format(view_name,
+                                                     view_name.capitalize()))
+        button = self.wait_for_visible_element_by_xpath(xpath)
+        button.click()
+
     def click_form_view_tab(self, tab_name):
         tabs = self.webdriver.find_elements(
             By.CSS_SELECTOR,
@@ -550,16 +561,6 @@ class OdooUI(object):
             '//button[@class="btn btn-sm oe_button btn btn-primary"]')
         with self.wait_for_ajax_load(timeout):
             btn.click()
-
-    def switch_to_view(self, view_name):
-        """Switch to list, form or kanban view
-
-        @param view_name: should be list, form or kanban"""
-
-        xpath = ('//button[contains(@class, "oe-cp-switch-list") and '
-                 '@data-original-title="{}"]'.format(view_name.capitalize()))
-        button = self.wait_for_visible_element_by_xpath(xpath)
-        button.click()
 
     def _get_bt_testing_element(self, field_name, model_name=None,
                                 in_dialog=False, last=False):
