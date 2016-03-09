@@ -15,7 +15,7 @@ from selenium.webdriver.support import ui
 from odooselenium import wait
 
 
-PAGER_STATUS_REX = re.compile('\d+-(?P<last>\d+) of (?P<total>\d+)')
+PAGER_STATUS_REX = re.compile('\d+-(?P<last>\d+)')
 
 
 class OdooUI(object):
@@ -374,30 +374,27 @@ class OdooUI(object):
         """Get the values of all rows having a specific column value.
         If data_field and column_value are not specified, get all rows."""
 
-        columns_xpath = ('//table[@class="oe_list_content"]/thead/tr['
-                         '@class="oe_list_header_columns"]/th[starts-with('
-                         '@class, "oe_list_header_")]')
-        headers_xpath = '{}/div'.format(columns_xpath)
+        columns_xpath = ('//table[contains(@class, "o_list_view")]/thead/tr'
+                         '/th[@class="o_column_sortable"]')
 
         if data_field and column_value:
-            xpath = ('//table[@class="oe_list_content"]/tbody/tr/td['
+            xpath = ('//table[contains(@class, "o_list_view")]/tbody/tr/td['
                      '@data-field="{}" and text()="{}"]/../td'.format(
                          data_field, column_value))
         else:
-            xpath = '//table[@class="oe_list_content"]/tbody/tr/td'
+            xpath = '//table[contains(@class, "o_list_view")]/tbody/tr/td'
 
-        return self._get_rows_from_list(columns_xpath, headers_xpath, xpath)
+        return self._get_rows_from_list(columns_xpath, xpath)
 
-    def _get_rows_from_list(self, columns_xpath, headers_xpath, values_xpath):
+    def _get_rows_from_list(self, columns_xpath, values_xpath):
         columns = [elem for elem in
                    self.webdriver.find_elements_by_xpath(columns_xpath)
                    if elem.is_displayed()]
 
         chunk_size = len(columns)
 
-        header_values = [elem.text for elem in
-                         self.webdriver.find_elements_by_xpath(headers_xpath)
-                         if elem.is_displayed()]
+        header_values = [elem.text.strip() for elem in columns if
+                         elem.is_displayed()]
 
         header_values += ['Untitled{}'.format(x) for x
                           in xrange(chunk_size - len(header_values))]
@@ -462,9 +459,10 @@ class OdooUI(object):
         while not rows:
             rows = self.get_rows_from_list(data_field, value)
 
-            next_button_xpath = ('//div[@class="oe_list_pager"]/'
-                                 'ul[@class="oe_pager_group"]/li/'
-                                 'a[@data-pager-action="next"]')
+            next_button_xpath = ('//div[@class="o_cp_pager"]'
+                                 '/div/span[contains(@class, "btn-group")]'
+                                 '/button[contains(@class, '
+                                 '"fa-chevron-right")]')
             next_buttons = self.webdriver.find_elements_by_xpath(
                 next_button_xpath)
 
@@ -473,20 +471,25 @@ class OdooUI(object):
             elif not next_buttons:
                 raise RuntimeError('Could not find row with {}'.format(value))
             else:
-                pager_status_xpath = '//span[@class="oe_list_pager_state"]'
+                pager_status_xpath = '//span[@class="o_pager_value"]'
                 pager_status = self.webdriver.find_element_by_xpath(
                     pager_status_xpath)
+
+                pager_limit_xpath = '//span[@class="o_pager_limit"]'
+                pager_limit = self.webdriver.find_element_by_xpath(
+                    pager_limit_xpath)
 
                 match = re.match(PAGER_STATUS_REX, pager_status.text)
 
                 if match:
                     status_match = match.groupdict()
-                    if status_match['last'] == status_match['total']:
+                    if status_match['last'] == pager_limit.text:
                         raise RuntimeError('Could not find row with {}'.format(
                             value))
-                next_buttons[0].click()
+                with self.wait_for_ajax_load():
+                    next_buttons[0].click()
 
-        xpath = ('//table[@class="oe_list_content"]/tbody/tr/'
+        xpath = ('//table[contains(@class, "o_list_view")]/tbody/tr/'
                  'td[@data-field="{}" and text()="{}"]'.format(
                      data_field, value))
 
@@ -518,7 +521,7 @@ class OdooUI(object):
         self.click_user_menu_item('About')
         xpath = '//a[@href="?debug"]'
         elem = self.wait_for_visible_element_by_xpath(xpath)
-        with wait.wait_for_body_odoo_load(self.webdriver):
+        with wait.wait_for_new_page_load(self.webdriver):
             elem.click()
 
     def open_user_menu(self):
