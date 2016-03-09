@@ -375,11 +375,12 @@ class OdooUI(object):
         If data_field and column_value are not specified, get all rows."""
 
         columns_xpath = ('//table[contains(@class, "o_list_view")]/thead/tr'
-                         '/th[@class="o_column_sortable"]')
+                         '/th[not(@class="o_list_record_selector")]')
 
         if data_field and column_value:
             xpath = ('//table[contains(@class, "o_list_view")]/tbody/tr/td['
-                     '@data-field="{}" and text()="{}"]/../td'.format(
+                     '@data-field="{}" and text()="{}"]/..'
+                     '/td[not(@class="o_list_record_selector")]'.format(
                          data_field, column_value))
         else:
             xpath = '//table[contains(@class, "o_list_view")]/tbody/tr/td'
@@ -564,7 +565,7 @@ class OdooUI(object):
 
         self.click_list_column(column, module_name)
         btn = self.wait_for_visible_element_by_xpath(
-            '//button[@class="btn btn-sm oe_button btn btn-primary"]')
+            '//button[@class="btn btn-sm btn btn-primary"]')
         with self.wait_for_ajax_load(timeout):
             btn.click()
 
