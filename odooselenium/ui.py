@@ -440,8 +440,7 @@ class OdooUI(object):
                 button = None
 
     def search_for(self, search_string):
-        xpath = ('//div[@class="oe_searchview_facets"]/'
-                 'div[@class="oe_searchview_input"]')
+        xpath = '//input[@class="o_searchview_input"]'
         input_fields = self.webdriver.find_elements_by_xpath(xpath)
         input_field = next(field for field in input_fields
                            if field.is_displayed())
