@@ -127,14 +127,24 @@ class OdooUI(object):
         )
 
     def list_modules(self):
-        modules = self.webdriver.find_elements(
-            By.CSS_SELECTOR,
-            ".navbar-nav .oe_menu_text"
-        )
+        xpath = '//a[@class="o_app o_action_app"]/div[@class="o_caption"]'
+        modules = self.webdriver.find_elements_by_xpath(xpath)
         return modules
 
+    def go_to_homescreen(self):
+        xpath = ('//a[@class="navbar-brand o_menu_toggle"]'
+                 '/i[contains(@class, "fa")]')
+        try:
+            elem = self.webdriver.find_element_by_xpath(xpath)
+        except NoSuchElementException:
+            return
+
+        if 'fa-th' in elem.get_attribute('class'):
+            elem.click()
+
     def go_to_module(self, module_name, timeout=10):
-        """Click on the module in menu."""
+        """Go to the home screen if necessary, then click on a module."""
+        self.go_to_homescreen()
         modules = self.list_modules()
         module_link = None
         for module in modules:
@@ -149,7 +159,7 @@ class OdooUI(object):
         ui.WebDriverWait(self.webdriver, timeout).until(
             expected_conditions.presence_of_element_located((
                 By.CSS_SELECTOR,
-                '.oe_application .oe-view-manager'
+                '.o_content'
             ))
         )
 
