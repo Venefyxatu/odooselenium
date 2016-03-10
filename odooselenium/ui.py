@@ -191,19 +191,11 @@ class OdooUI(object):
         button.click()
 
     def click_form_view_tab(self, tab_name):
-        tabs = self.webdriver.find_elements(
-            By.CSS_SELECTOR,
-            ".ui-tabs .ui-corner-top .ui-tabs-anchor"
-        )
-        requested_tab = None
-        for tab in tabs:
-            if tab.text == tab_name:
-                requested_tab = tab
-                break
-        assert requested_tab is not None, \
-            "Couldn't find form tab '{0}'".format(tab_name)
+        tab = self.webdriver.find_element_by_xpath(
+            '//a[@role="tab" and normalize-space(text())="{}"]'.format(
+                tab_name))
         with self.wait_for_ajax_load():
-            requested_tab.click()
+            tab.click()
 
     def click_button(self, button_name, view_name):
         # TODO: test with v9
@@ -611,7 +603,6 @@ class OdooUI(object):
         @clear: whether to clear the field first
         @param clear: whether to clear the field first
         """
-        # TODO: test with v9
         elem = self._get_bt_testing_element(field_name, model_name,
                                             in_dialog=in_dialog)
 
