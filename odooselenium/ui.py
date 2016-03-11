@@ -613,9 +613,17 @@ class OdooUI(object):
 
     def toggle_checkbox(self, field_name, model_name):
         """Toggles a checkbox"""
-        # TODO: test with v9
-        elem = self._get_bt_testing_element(field_name, model_name)
-        elem.click()
+        # _get_bt_testing_element waits for the element to be visible, but
+        # checkboxes have opacity set to 0 in v9.
+        elem = self.webdriver.find_element_by_xpath(
+            '//input[@type="checkbox" and @data-bt-testing-model_name="{}" '
+            'and @data-bt-testing-name="{}"]'.format(model_name, field_name))
+        if elem.find_element_by_xpath('parent::div').is_displayed:
+            elem.click()
+        else:
+            raise NoSuchElementException(
+                'Could not find checkbox for {}.{}'.format(model_name,
+                                                           field_name))
 
     def open_text_dropdown(self, field_name, model_name, in_dialog):
         """Open a dropdown list on a text field"""
