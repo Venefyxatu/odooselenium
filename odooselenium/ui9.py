@@ -18,7 +18,7 @@ from odooselenium import wait
 PAGER_STATUS_REX = re.compile('\d+-(?P<last>\d+)')
 
 
-class OdooUI(object):
+class OdooUI9(object):
     """Encapsulate DOM elements of Odoo user interface."""
     def __init__(self, webdriver, base_url='http://localhost:8069'):
         #: Selenium WebDriver instance.
