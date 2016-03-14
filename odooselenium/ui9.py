@@ -579,7 +579,7 @@ class OdooUI9(object):
         with self.wait_for_ajax_load(timeout):
             btn.click()
 
-    def _get_bt_testing_element(self, field_name, model_name=None,
+    def _get_bt_testing_element(self, field_name, model_name=None, data=None,
                                 in_dialog=False, last=False):
         if in_dialog:
             xpath = '//div[@class="modal-content openerp"]'
@@ -594,6 +594,11 @@ class OdooUI9(object):
         else:
             xpath = '{}//*[@data-bt-testing-name="{}"]'.format(xpath,
                                                                field_name)
+
+        if data:
+            for key, value in data.iteritems():
+                xpath = re.sub(']$', ' and @{}="{}"]'.format(key, value),
+                               xpath)
 
         if last:
             xpath = '({})[last()]'.format(xpath)
@@ -633,17 +638,16 @@ class OdooUI9(object):
 
     def open_text_dropdown(self, field_name, model_name, in_dialog):
         """Open a dropdown list on a text field"""
-        # TODO: test with v9
 
         if in_dialog:
-            xpath = '//div[@class="modal-content openerp"]'
+            xpath = '//div[@class="modal-content"]'
         else:
             xpath = ''
 
         xpath += ('//input[@data-bt-testing-name="{}" and '
-                  '@data-bt-testing-model_name="{}"]/../'
-                  'span[@class="oe_m2o_drop_down_button"]'.format(field_name,
-                                                                  model_name))
+                  '@data-bt-testing-model_name="{}"]/parent::'
+                  'div[@class="o_form_input_dropdown"]'.format(field_name,
+                                                               model_name))
         elem = self.wait_for_visible_element_by_xpath(xpath)
         elem.click()
         time.sleep(0.5)
@@ -731,14 +735,16 @@ class OdooUI9(object):
 
     def _get_data_id_from_column_title(self, column_title):
         """Get the data-id attribute based on a column title"""
-        # TODO: test with v9
 
-        xpath = ('//table[@class="oe_list_content"]/thead/tr'
-                 '[@class="oe_list_header_columns"]/th/div[normalize-space('
-                 'text())="{}"]/..'.format(column_title))
+        xpath = ('//table[contains(@class, "o_list_view table")]/thead/tr'
+                 '/th[normalize-space(text())="{}"]'.format(column_title))
 
-        elem = self.webdriver.find_element_by_xpath(xpath)
-        return elem.get_attribute('data-id')
+        elems = self.webdriver.find_elements_by_xpath(xpath)
+        for elem in elems:
+            if elem.is_displayed():
+                return elem.get_attribute('data-id')
+        raise NoSuchElementException("Couldn't find data-id for column {}"
+                                     .format(column_title))
 
     def _get_autocomplete_dropdown_items(self, field_name, model, in_dialog):
         self.open_text_dropdown(field_name, model, in_dialog)
