@@ -198,7 +198,7 @@ class OdooUI9(object):
             tab.click()
 
     def click_button(self, button_name, view_name):
-        # TODO: test with v9
+        # TODO: convert to v9
         button_divs = self.webdriver.find_elements_by_css_selector(
             '.oe_view_manager_buttons .oe_{}_buttons'.format(view_name))
         for button_div in button_divs:
@@ -642,22 +642,8 @@ class OdooUI9(object):
         elem.click()
         time.sleep(0.5)
 
-    def get_edit_field_from_label_text(self, label_text):
-        """Get the editable field which belongs to a label.
-        CAUTION: some labels have more than one field, but only one of them
-        will be linked by ID."""
-        # TODO: test with v9
-
-        xpath = '//tr/td/label[normalize-space(text())="{}"]'.format(
-            label_text)
-        label = self.webdriver.find_element_by_xpath(xpath)
-        field_id = label.get_attribute('for')
-        field = self.webdriver.find_element_by_id(field_id)
-        return field
-
     def get_value(self, field, model):
         """Get the value of a field"""
-        # TODO: test with v9
 
         field = self._get_bt_testing_element(field, model)
         if field.get_attribute('type') == 'checkbox':
@@ -749,7 +735,6 @@ class OdooUI9(object):
         return elem.get_attribute('data-id')
 
     def _get_autocomplete_dropdown_items(self, field_name, model, in_dialog):
-        # TODO: test with v9
         self.open_text_dropdown(field_name, model, in_dialog)
         menu_items_xpath = ('//ul[contains(@class, "ui-autocomplete")]/'
                             'li[contains(@class, "ui-menu-item")]/a')
