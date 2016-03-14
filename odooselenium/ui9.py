@@ -793,7 +793,6 @@ class OdooUI9(object):
                              subsequent dialog
         @param value: the value to search for
         """
-        # TODO: test with v9
         elem = next(e for e in menu_items if e.text == 'Search More...')
         with self.wait_for_ajax_load():
             elem.click()
