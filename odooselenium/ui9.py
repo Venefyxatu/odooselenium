@@ -213,6 +213,12 @@ class OdooUI9(object):
                             button.click()
                         break
 
+    def click_back_button(self, name):
+        xpath = '//li[@class="o_back_button"]/a[text()="{}"]'.format(name)
+        elem = self.webdriver.find_element_by_xpath(xpath)
+        with self.wait_for_ajax_load():
+            elem.click()
+
     def click_edit(self, timeout=10):
         self.click_ajax_load_button('oe_form_button_edit', timeout=timeout)
 
