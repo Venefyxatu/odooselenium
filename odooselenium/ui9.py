@@ -759,7 +759,6 @@ class OdooUI9(object):
         """Search through a text dropdown. If the value is already in the
         dropdown, click it. If not, go to the search form via the Search
         More... item."""
-        # TODO: test with v9
 
         menu_items = self._get_autocomplete_dropdown_items(field_name,
                                                            model,
