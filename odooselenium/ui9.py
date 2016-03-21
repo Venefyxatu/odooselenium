@@ -190,10 +190,15 @@ class OdooUI9(object):
         button = self.wait_for_visible_element_by_xpath(xpath)
         button.click()
 
-    def click_form_view_tab(self, tab_name):
-        tab = self.webdriver.find_element_by_xpath(
-            '//a[@role="tab" and normalize-space(text())="{}"]'.format(
-                tab_name))
+    def click_form_view_tab(self, tab_name, in_dialog=False):
+        if in_dialog:
+            xpath = '//div[contains(@class, "modal-body")]'
+        else:
+            xpath = ''
+
+        xpath += '//a[@role="tab" and normalize-space(text())="{}"]'.format(
+            tab_name)
+        tab = self.webdriver.find_element_by_xpath(xpath)
         with self.wait_for_ajax_load():
             tab.click()
 
@@ -582,7 +587,7 @@ class OdooUI9(object):
     def _get_bt_testing_element(self, field_name, model_name=None, data=None,
                                 in_dialog=False, last=False):
         if in_dialog:
-            xpath = '//div[@class="modal-content openerp"]'
+            xpath = '//div[@class="modal-content"]'
         else:
             xpath = ''
 
@@ -688,11 +693,8 @@ class OdooUI9(object):
         elif input_field.tag_name == 'input':
             elem_class = input_field.get_attribute('class')
             elem_type = input_field.get_attribute('type')
-            if (elem_type in ['text', 'password'] and
-                    elem_class in ['', 'oe_datepicker_master']):
-                self.write_in_element(field, model, data, clear, in_dialog)
-            elif (elem_type == 'text' and
-                    elem_class == 'ui-autocomplete-input'):
+            if (elem_type == 'text' and
+                    'ui-autocomplete-input' in elem_class):
                 if isinstance(data, list):
                     self.create_from_text_dropdown(field, model, in_dialog,
                                                    data)
@@ -703,9 +705,19 @@ class OdooUI9(object):
                     else:
                         self.search_text_dropdown(field, model, search_column,
                                                   data, in_dialog)
+            elif (elem_type in ['text', 'password'] and
+                    (any(x in elem_class for x in ['o_form_input',
+                                                   'oe_datepicker_master'])
+                     or elem_class == '')):
+                self.write_in_element(field, model, data, clear, in_dialog)
             elif elem_type == 'checkbox':
                 if input_field.is_selected() != data:
                     self.toggle_checkbox(field, model)
+            elif elem_type == 'radio':
+                elem = self._get_bt_testing_element(field, model,
+                                                    {'value': data},
+                                                    in_dialog=in_dialog)
+                elem.click()
             else:
                 raise NotImplementedError(
                     "I don't know how to handle {}".format(field))
@@ -724,6 +736,8 @@ class OdooUI9(object):
         """
         # TODO: test with v9
         for config_item in config_data:
+            if config_item.get('tab'):
+                self.click_form_view_tab(config_item['tab'], True)
             self.enter_data(config_item['field'], config_item['model'],
                             config_item['value'],
                             config_item.get('clear', True),
