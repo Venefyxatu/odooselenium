@@ -679,7 +679,6 @@ class OdooUI9(object):
         @param search_column: the column title to search in the Search form in
                               case of an autocomplete text field
         """
-        # TODO: test with v9
         input_field = self._get_bt_testing_element(field, model,
                                                    in_dialog=in_dialog)
 
@@ -734,7 +733,6 @@ class OdooUI9(object):
             * search_column: the column title to search in the Search form in
                              case of an autocomplete text field
         """
-        # TODO: test with v9
         for config_item in config_data:
             if config_item.get('tab'):
                 self.click_form_view_tab(config_item['tab'], True)
@@ -743,6 +741,8 @@ class OdooUI9(object):
                             config_item.get('clear', True),
                             config_item.get('search_column'), True)
 
+        # TODO: buttons on modal dialogs don't work - this is an issue
+        #       with web_selenium
         button = self._get_bt_testing_element(next_button, last=True)
         with self.wait_for_ajax_load(timeout):
             button.click()
@@ -788,7 +788,6 @@ class OdooUI9(object):
                                   config_data):
         """Create a new item in an autocomplete text field via the Create and
         Edit option"""
-        # TODO: test with v9
         menu_items = self._get_autocomplete_dropdown_items(field_name,
                                                            model,
                                                            in_dialog)

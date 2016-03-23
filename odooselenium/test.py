@@ -3,7 +3,7 @@ import unittest
 
 from selenium import webdriver
 
-from odooselenium.ui import OdooUI
+from odooselenium.ui9 import OdooUI9
 
 
 class TestCase(unittest.TestCase):
@@ -12,7 +12,7 @@ class TestCase(unittest.TestCase):
         self.configure()
         self.setup_webdriver()
         #: Bindings to Odoo user interface.
-        self.ui = OdooUI(self.webdriver, base_url=self.cfg['url'])
+        self.ui = OdooUI9(self.webdriver, base_url=self.cfg['url'])
         self.ui.login(self.cfg['username'],
                       self.cfg['password'],
                       self.cfg['dbname'])
