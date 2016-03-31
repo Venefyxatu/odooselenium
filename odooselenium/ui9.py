@@ -736,7 +736,7 @@ class OdooUI9(object):
         elif input_field.tag_name == 'textarea':
             self.write_in_element(field, model, data, clear, in_dialog)
 
-    def wizard_screen(self, config_data, next_button="action_next",
+    def wizard_screen(self, config_data, next_button="Next",
                       timeout=30):
         """Enter the specified config data in the wizard screen.
         config_data is a list of dicts. Each dict needs:
@@ -758,8 +758,8 @@ class OdooUI9(object):
         #       with web_selenium that I was unable to solve.
         #       Working around it like this.
         button = self.wait_for_visible_element_by_xpath(
-            '//button[contains(@class, "btn-primary")]/span[text() = "Save"]'
-            '/parent::button')
+            '//button[contains(@class, "btn-primary")]/span[text() = "{}"]'
+            '/parent::button'.format(next_button))
         with self.wait_for_ajax_load(timeout):
             button.click()
 
