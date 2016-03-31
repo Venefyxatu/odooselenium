@@ -443,7 +443,10 @@ class OdooUI9(object):
     def clear_search_facets(self):
         xpath = ('//div[@class="o_searchview_facet"]'
                  '/div[contains(@class, "o_facet_remove")]')
-        button = self.webdriver.find_element_by_xpath(xpath)
+        try:
+            button = self.webdriver.find_element_by_xpath(xpath)
+        except NoSuchElementException:
+            return
         while button:
             with self.wait_for_ajax_load():
                 button.click()
@@ -679,8 +682,16 @@ class OdooUI9(object):
         @param search_column: the column title to search in the Search form in
                               case of an autocomplete text field
         """
-        input_field = self._get_bt_testing_element(field, model,
-                                                   in_dialog=in_dialog)
+        if data in [True, False]:
+            input_field = self.webdriver.find_element_by_xpath(
+                '//input[@type="checkbox" and @data-bt-testing-model_name="{}"'
+                ' and @data-bt-testing-name="{}"]'.format(model, field))
+            if not input_field.find_element_by_xpath(
+                    'parent::div').is_displayed:
+                raise RuntimeError('Checkbox is not displayed')
+        else:
+            input_field = self._get_bt_testing_element(field, model,
+                                                       in_dialog=in_dialog)
 
         if input_field.tag_name == 'select':
             dropdown_xpath = ('//select[@data-bt-testing-name="{}" and '
@@ -742,8 +753,11 @@ class OdooUI9(object):
                             config_item.get('search_column'), True)
 
         # TODO: buttons on modal dialogs don't work - this is an issue
-        #       with web_selenium
-        button = self._get_bt_testing_element(next_button, last=True)
+        #       with web_selenium that I was unable to solve.
+        #       Working around it like this.
+        button = self.wait_for_visible_element_by_xpath(
+            '//button[contains(@class, "btn-primary")]/span[text() = "Save"]'
+            '/parent::button')
         with self.wait_for_ajax_load(timeout):
             button.click()
 
