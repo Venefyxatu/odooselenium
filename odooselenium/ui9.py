@@ -604,8 +604,11 @@ class OdooUI9(object):
 
         if data:
             for key, value in data.iteritems():
-                xpath = re.sub(']$', ' and @{}="{}"]'.format(key, value),
-                               xpath)
+                xpath = re.sub(
+                    ']$', ' and translate(@{}, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", '
+                    '"abcdefghijklmnopqrstuvwxyz")="{}"]'.format(
+                        key, value.lower()),
+                    xpath)
 
         if last:
             xpath = '({})[last()]'.format(xpath)
