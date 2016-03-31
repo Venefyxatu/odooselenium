@@ -300,9 +300,9 @@ class OdooUI9(object):
     def delete_item_from_form_list(self, column, value, header=None,
                                    timeout=10):
         # TODO: test with v9
-        xpath = ('//table[@class="oe_list_content"]/tbody/tr/'
+        xpath = ('//table[contains(@class, "o_list_view")]/tbody/tr/'
                  'td[@data-field="{}" and text()="{}"]/following-sibling::'
-                 'td[@class="oe_list_record_delete"]'.format(column, value))
+                 'td[@class="o_list_record_delete"]'.format(column, value))
 
         if header:
             xpath = ('//div[normalize-space(text())="{}"]/'
