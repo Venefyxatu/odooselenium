@@ -332,8 +332,7 @@ class OdooUI9(object):
 
     def add_item_to_form_table(self, header=None, timeout=10):
         # TODO: test with v9
-        xpath = ('//*[@class="oe_form_field_one2many_list_row_add" or '
-                 '@class="oe_form_field_many2many_list_row_add"]/a')
+        xpath = '//*[@class="o_form_field_x2many_list_row_add"]/a'
         if header:
             xpath = ('//div[normalize-space(text())="{}"]/'
                      'following-sibling::*[1]{}'.format(header, xpath))
