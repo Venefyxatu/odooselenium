@@ -299,7 +299,6 @@ class OdooUI9(object):
 
     def delete_item_from_form_list(self, column, value, header=None,
                                    timeout=10):
-        # TODO: test with v9
         xpath = ('//table[contains(@class, "o_list_view")]/tbody/tr/'
                  'td[@data-field="{}" and text()="{}"]/following-sibling::'
                  'td[@class="o_list_record_delete"]'.format(column, value))
@@ -311,7 +310,6 @@ class OdooUI9(object):
         self._delete_item_from_form(xpath, timeout)
 
     def _delete_item_from_form(self, xpath, timeout):
-        # TODO: test with v9
         delete_buttons = self.webdriver.find_elements_by_xpath(xpath)
 
         visible_buttons = [b for b in delete_buttons if b.is_displayed()]
